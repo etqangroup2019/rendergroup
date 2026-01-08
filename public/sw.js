@@ -1,4 +1,4 @@
-const CACHE_NAME = 'render-hub-v3';
+const CACHE_NAME = 'render-hub-v4';
 const BASE_URL = '/rendergroup/';
 const ASSETS = [
     BASE_URL,
