@@ -4,7 +4,7 @@ const ASSETS = [
     BASE_URL,
     BASE_URL + 'index.html',
     BASE_URL + 'manifest.json',
-    BASE_URL + 'vite.svg',
+    BASE_URL + 'app_icon.png',
     BASE_URL + 'khaled.jpg',
     BASE_URL + 'render_work_1_1767876099095.png',
     BASE_URL + 'render_work_2_1767876400226.png'
