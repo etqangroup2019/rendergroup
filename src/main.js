@@ -48,7 +48,7 @@ function getNavbar() {
             <img src="/rendergroup/app_icon.png" alt="Logo" style="height: 32px; width: 32px; object-fit: contain;">
             <span>${t('title')}</span>
           </a>
-          <span style="font-weight: 500; font-size: 0.8rem; opacity: 0.7;">${t('subtitle')}</span>
+          <span class="nav-subtitle" style="font-weight: 500; font-size: 0.8rem; opacity: 0.7;">${t('subtitle')}</span>
         </div>
         <div class="controls">
           <button class="theme-toggle" id="themeBtn">

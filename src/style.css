@@ -296,6 +296,10 @@ nav {
     font-size: 2.5rem;
   }
 
+  .nav-subtitle {
+    display: none;
+  }
+
   .detail-header {
     flex-direction: column;
     text-align: center;
