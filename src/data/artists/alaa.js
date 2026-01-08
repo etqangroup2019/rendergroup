@@ -19,6 +19,6 @@ export const alaa = {
         telegram: "https://t.me/+218917085670",
         facebook: "https://www.facebook.com/share/18CKNTW3Qo/?mibextid=wwXIfr",
         instagram: "https://www.instagram.com/ragel_ala?igsh=c2Ruc2x4dTlsOTM0&utm_source=qr",
-        gmail: "mailto:alaa.ragel@example.com" // Placeholder email
+        gmail: "mailto:alragel@outlook.com"
     }
 };
