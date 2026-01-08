@@ -40,10 +40,10 @@ export const artists = [
       ar: "خبير في الإظهار المعماري والنمذجة ثلاثية الأبعاد، مؤسس مجموعة إتقان.",
       en: "Expert in architectural visualization and 3D modeling, founder of Etqan Group."
     },
-    avatar: "khaled.jpg",
+    avatar: "/rendergroup/khaled.jpg",
     works: [
-      "render_work_1_1767876099095.png",
-      "render_work_2_1767876400226.png"
+      "/rendergroup/render_work_1_1767876099095.png",
+      "/rendergroup/render_work_2_1767876400226.png"
     ],
     terms: {
       ar: "نلتزم بالجودة العالية والمواعيد الدقيقة. التواصل عبر الواتساب للمشاريع الرسمية.",
