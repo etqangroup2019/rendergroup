@@ -11,14 +11,38 @@ let state = {
   theme: localStorage.getItem('theme') || 'dark'
 };
 
-function setState(newState) {
+function setState(newState, pushHistory = true) {
+  const oldPage = state.page;
+  const oldArtistId = state.selectedArtist?.id;
+
   state = { ...state, ...newState };
   localStorage.setItem('lang', state.lang);
   localStorage.setItem('theme', state.theme);
+
+  if (pushHistory && (state.page !== oldPage || state.selectedArtist?.id !== oldArtistId)) {
+    const path = state.page === 'home' ? '' : `?artist=${state.selectedArtist.id}`;
+    window.history.pushState({
+      page: state.page,
+      artistId: state.selectedArtist?.id
+    }, '', window.location.pathname + path);
+  }
+
   updateTheme();
   updateDir();
   render();
 }
+
+window.addEventListener('popstate', (event) => {
+  if (event.state) {
+    const artist = event.state.artistId ? artists.find(a => a.id === event.state.artistId) : null;
+    setState({
+      page: event.state.page,
+      selectedArtist: artist
+    }, false);
+  } else {
+    setState({ page: 'home', selectedArtist: null }, false);
+  }
+});
 
 function updateTheme() {
   document.documentElement.setAttribute('data-theme', state.theme);
@@ -65,10 +89,10 @@ function getNavbar() {
 
 function attachGlobalListeners() {
   document.getElementById('themeBtn')?.addEventListener('click', () => {
-    setState({ theme: state.theme === 'dark' ? 'light' : 'dark' });
+    setState({ theme: state.theme === 'dark' ? 'light' : 'dark' }, false);
   });
   document.getElementById('langBtn')?.addEventListener('click', () => {
-    setState({ lang: state.lang === 'ar' ? 'en' : 'ar' });
+    setState({ lang: state.lang === 'ar' ? 'en' : 'ar' }, false);
   });
   document.querySelectorAll('.home-link').forEach(link => {
     link.addEventListener('click', (e) => {
@@ -117,7 +141,13 @@ function renderDetail(artist) {
 
   app.innerHTML = `
     ${getNavbar()}
-    <header class="container fade-in">
+    <div class="container" style="margin-top: 20px;">
+      <a href="#" class="home-link back-link" style="text-decoration: none; color: var(--primary); font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+        <i class="fas fa-arrow-right"></i>
+        ${t('backHome')}
+      </a>
+    </div>
+    <header class="container fade-in" style="margin-top: 20px;">
       <div class="detail-header">
         <img src="${artist.avatar}" alt="${artist.name[state.lang]}" class="artist-avatar">
         <div style="flex: 1;">
@@ -165,6 +195,20 @@ function renderDetail(artist) {
 }
 
 // Initial
+const urlParams = new URLSearchParams(window.location.search);
+const artistId = parseInt(urlParams.get('artist'));
+if (artistId) {
+  const artist = artists.find(a => a.id === artistId);
+  if (artist) {
+    state.page = 'detail';
+    state.selectedArtist = artist;
+    // Replace current state so back button works correctly from start
+    window.history.replaceState({ page: 'detail', artistId }, '', window.location.href);
+  }
+} else {
+  window.history.replaceState({ page: 'home', artistId: null }, '', window.location.href);
+}
+
 updateTheme();
 updateDir();
 render();

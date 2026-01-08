@@ -275,6 +275,22 @@ nav {
   text-align: right;
 }
 
+.back-link {
+  transition: transform 0.3s ease;
+}
+
+.back-link:hover {
+  transform: translateX(5px);
+}
+
+[dir="ltr"] .back-link:hover {
+  transform: translateX(-5px);
+}
+
+[dir="ltr"] .back-link i {
+  transform: rotate(180deg);
+}
+
 .theme-toggle,
 .lang-toggle {
   background: var(--card-bg);
