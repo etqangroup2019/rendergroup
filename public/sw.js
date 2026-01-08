@@ -1,4 +1,4 @@
-const CACHE_NAME = 'render-hub-v5';
+const CACHE_NAME = 'render-hub-v6';
 const BASE_URL = '/rendergroup/';
 const ASSETS = [
     BASE_URL,
@@ -12,9 +12,26 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
+    // Force the waiting service worker to become the active service worker.
+    self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             return cache.addAll(ASSETS);
+        })
+    );
+});
+
+self.addEventListener('activate', (event) => {
+    // Delete old caches
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheName !== CACHE_NAME) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
         })
     );
 });

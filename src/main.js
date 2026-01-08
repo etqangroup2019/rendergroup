@@ -172,10 +172,25 @@ render();
 // Service Worker Registration
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    // We use a relative path that works with both dev and prod (GitHub Pages)
     const swPath = import.meta.env.DEV ? '/sw.js' : 'sw.js';
     navigator.serviceWorker.register(swPath)
-      .then(reg => console.log('SW Registered', reg))
+      .then(reg => {
+        console.log('SW Registered');
+
+        // Check for updates
+        reg.onupdatefound = () => {
+          const installingWorker = reg.installing;
+          installingWorker.onstatechange = () => {
+            if (installingWorker.state === 'installed') {
+              if (navigator.serviceWorker.controller) {
+                // New content is available; please refresh.
+                console.log('New content available, refreshing...');
+                window.location.reload();
+              }
+            }
+          };
+        };
+      })
       .catch(err => console.error('SW Registration Failed', err));
   });
 }
