@@ -1,4 +1,4 @@
-const CACHE_NAME = 'render-hub-v4';
+const CACHE_NAME = 'render-hub-v5';
 const BASE_URL = '/rendergroup/';
 const ASSETS = [
     BASE_URL,
@@ -6,6 +6,7 @@ const ASSETS = [
     BASE_URL + 'manifest.json',
     BASE_URL + 'app_icon.png',
     BASE_URL + 'khaled.jpg',
+    BASE_URL + 'alaa_avatar.jpg',
     BASE_URL + 'render_work_1_1767876099095.png',
     BASE_URL + 'render_work_2_1767876400226.png'
 ];

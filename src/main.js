@@ -126,11 +126,17 @@ function renderDetail(artist) {
           <p style="color: var(--text-muted); margin-top: 1rem;">${artist.bio[state.lang]}</p>
           
           <div class="social-links">
-            <a href="${artist.socials.whatsapp}" target="_blank" class="social-btn whatsapp"><i class="fab fa-whatsapp"></i></a>
-            <a href="${artist.socials.telegram}" target="_blank" class="social-btn telegram"><i class="fab fa-telegram-plane"></i></a>
-            <a href="${artist.socials.facebook}" target="_blank" class="social-btn facebook"><i class="fab fa-facebook-f"></i></a>
-            <a href="${artist.socials.gmail}" target="_blank" class="social-btn gmail"><i class="far fa-envelope"></i></a>
-            <a href="${artist.socials.youtube}" target="_blank" class="social-btn youtube"><i class="fab fa-youtube"></i></a>
+            ${Object.entries(artist.socials).map(([platform, url]) => {
+    const icons = {
+      whatsapp: 'fab fa-whatsapp',
+      telegram: 'fab fa-telegram-plane',
+      facebook: 'fab fa-facebook-f',
+      instagram: 'fab fa-instagram',
+      gmail: 'far fa-envelope',
+      youtube: 'fab fa-youtube'
+    };
+    return `<a href="${url}" target="_blank" class="social-btn ${platform}"><i class="${icons[platform] || 'fas fa-link'}"></i></a>`;
+  }).join('')}
           </div>
         </div>
       </div>
