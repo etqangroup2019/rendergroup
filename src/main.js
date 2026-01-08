@@ -213,7 +213,7 @@ updateTheme();
 updateDir();
 render();
 
-// Service Worker Registration
+// Service Worker Registration with Auto-Update
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     const swPath = import.meta.env.DEV ? '/sw.js' : 'sw.js';
@@ -221,20 +221,42 @@ if ('serviceWorker' in navigator) {
       .then(reg => {
         console.log('SW Registered');
 
-        // Check for updates
+        // Check for updates every 60 seconds
+        setInterval(() => {
+          reg.update();
+        }, 60 * 1000);
+
+        // Check for updates on page focus
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') {
+            reg.update();
+          }
+        });
+
+        // Handle updates
         reg.onupdatefound = () => {
           const installingWorker = reg.installing;
           installingWorker.onstatechange = () => {
             if (installingWorker.state === 'installed') {
               if (navigator.serviceWorker.controller) {
-                // New content is available; please refresh.
+                // New content available - notify user or auto-refresh
                 console.log('New content available, refreshing...');
-                window.location.reload();
+                // Tell SW to skip waiting
+                installingWorker.postMessage({ type: 'SKIP_WAITING' });
               }
             }
           };
         };
       })
       .catch(err => console.error('SW Registration Failed', err));
+
+    // Reload page when new SW takes control
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) {
+        refreshing = true;
+        window.location.reload();
+      }
+    });
   });
 }
