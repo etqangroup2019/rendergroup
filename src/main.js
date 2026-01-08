@@ -44,7 +44,10 @@ function getNavbar() {
     <nav>
       <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
         <div style="display: flex; align-items: center; gap: 20px;">
-          <a href="#" class="logo home-link">${t('title')}</a>
+          <a href="#" class="logo home-link" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+            <img src="/rendergroup/app_icon.png" alt="Logo" style="height: 32px; width: 32px; object-fit: contain;">
+            <span>${t('title')}</span>
+          </a>
           <span style="font-weight: 500; font-size: 0.8rem; opacity: 0.7;">${t('subtitle')}</span>
         </div>
         <div class="controls">
