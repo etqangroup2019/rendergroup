@@ -1,11 +1,12 @@
-const CACHE_NAME = 'render-hub-v1';
+const CACHE_NAME = 'render-hub-v2';
 const ASSETS = [
-    '/',
-    '/index.html',
-    '/src/main.js',
-    '/src/style.css',
-    '/manifest.json',
-    '/vite.svg'
+    './',
+    'index.html',
+    'manifest.json',
+    'vite.svg',
+    'khaled.jpg',
+    'render_work_1_1767876099095.png',
+    'render_work_2_1767876400226.png'
 ];
 
 self.addEventListener('install', (event) => {
