@@ -159,3 +159,14 @@ function renderDetail(artist) {
 updateTheme();
 updateDir();
 render();
+
+// Service Worker Registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    // We use a relative path that works with both dev and prod (GitHub Pages)
+    const swPath = import.meta.env.DEV ? '/sw.js' : 'sw.js';
+    navigator.serviceWorker.register(swPath)
+      .then(reg => console.log('SW Registered', reg))
+      .catch(err => console.error('SW Registration Failed', err));
+  });
+}

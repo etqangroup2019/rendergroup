@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-    base: './', // Essential for GitHub Pages deployment in subfolders
+    base: '/rendergroup/', // Specific base path for the repository
     build: {
         outDir: 'dist',
     },
