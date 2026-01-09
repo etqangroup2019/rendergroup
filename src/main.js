@@ -12,6 +12,29 @@ let state = {
   searchQuery: ''
 };
 
+// PWA Installation
+let deferredPrompt;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallButton();
+});
+
+function showInstallButton() {
+  const btn = document.getElementById('installBtn');
+  if (btn && !isStandalone) {
+    btn.classList.remove('hidden');
+  }
+}
+
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null;
+  document.getElementById('installBtn')?.classList.add('hidden');
+});
+
 function setState(newState, pushHistory = true) {
   const oldPage = state.page;
   const oldArtistId = state.selectedArtist?.id;
@@ -62,6 +85,12 @@ function render() {
   } else {
     renderDetail(state.selectedArtist);
   }
+
+  if (isIOS && !isStandalone && !document.getElementById('iosModal')) {
+    const modalDiv = document.createElement('div');
+    modalDiv.innerHTML = getIOSModal();
+    document.body.appendChild(modalDiv.firstElementChild);
+  }
 }
 
 function getNavbar() {
@@ -76,6 +105,10 @@ function getNavbar() {
           <span class="nav-subtitle" style="font-weight: 500; font-size: 0.8rem; opacity: 0.7;">${t('subtitle')}</span>
         </div>
         <div class="controls">
+          <button id="installBtn" class="install-btn hidden">
+            <i class="fas fa-download"></i>
+            <span>${t('installApp')}</span>
+          </button>
           <button class="theme-toggle" id="themeBtn">
             <i class="fas fa-${state.theme === 'dark' ? 'sun' : 'moon'}"></i>
           </button>
@@ -101,6 +134,45 @@ function attachGlobalListeners() {
       setState({ page: 'home', selectedArtist: null });
     });
   });
+
+  // Install button
+  const installBtn = document.getElementById('installBtn');
+  if (deferredPrompt || (isIOS && !isStandalone)) {
+    installBtn?.classList.remove('hidden');
+  }
+
+  installBtn?.addEventListener('click', async () => {
+    if (isIOS) {
+      document.getElementById('iosModal')?.classList.add('show');
+    } else if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') deferredPrompt = null;
+    }
+  });
+
+  document.getElementById('closeIosModal')?.addEventListener('click', () => {
+    document.getElementById('iosModal')?.classList.remove('show');
+  });
+}
+
+function getIOSModal() {
+  return `
+    <div id="iosModal" class="ios-modal">
+      <div class="ios-modal-content">
+        <div class="ios-modal-title">${t('iosInstallTitle')}</div>
+        <div class="ios-step">
+          <div class="ios-step-num">1</div>
+          <div>${t('iosInstallStep1')}</div>
+        </div>
+        <div class="ios-step">
+          <div class="ios-step-num">2</div>
+          <div>${t('iosInstallStep2')}</div>
+        </div>
+        <button id="closeIosModal" class="close-modal">${t('close')}</button>
+      </div>
+    </div>
+  `;
 }
 
 function renderHome() {

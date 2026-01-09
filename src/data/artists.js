@@ -16,7 +16,12 @@ export const translations = {
     langName: "English",
     specialty: "التخصص",
     bio: "السيرة الذاتية",
-    searchPlaceholder: "ابحث عن فنان..."
+    searchPlaceholder: "ابحث عن فنان...",
+    installApp: "تثبيت التطبيق",
+    iosInstallTitle: "تثبيت على iPhone",
+    iosInstallStep1: "اضغط على زر المشاركة في الأسفل <i class='far fa-share-square' style='color: #007aff; margin: 0 5px;'></i>",
+    iosInstallStep2: "اختر 'إضافة إلى الشاشة الرئيسية' <i class='far fa-plus-square' style='color: #333; margin: 0 5px;'></i>",
+    close: "إغلاق"
   },
   en: {
     title: "Render Hub",
@@ -32,7 +37,12 @@ export const translations = {
     langName: "العربية",
     specialty: "Specialty",
     bio: "Bio",
-    searchPlaceholder: "Search for an artist..."
+    searchPlaceholder: "Search for an artist...",
+    installApp: "Install App",
+    iosInstallTitle: "Install on iPhone",
+    iosInstallStep1: "Tap the share button below <i class='far fa-share-square' style='color: #007aff; margin: 0 5px;'></i>",
+    iosInstallStep2: "Select 'Add to Home Screen' <i class='far fa-plus-square' style='color: #333; margin: 0 5px;'></i>",
+    close: "Close"
   }
 };
 

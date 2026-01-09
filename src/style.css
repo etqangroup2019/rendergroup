@@ -317,6 +317,138 @@ nav {
   gap: 10px;
 }
 
+.install-btn {
+  background: var(--primary);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.install-btn i {
+  font-size: 1rem;
+}
+
+.install-btn span {
+  display: inline-block;
+}
+
+@media (max-width: 480px) {
+  .install-btn span {
+    display: none;
+  }
+
+  .install-btn {
+    padding: 8px 12px;
+  }
+}
+
+.install-btn.hidden {
+  display: none;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* iOS Modal */
+.ios-modal {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 9999;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.ios-modal.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+.ios-modal-content {
+  background: var(--card-bg);
+  width: 100%;
+  max-width: 500px;
+  border-radius: 20px 20px 0 0;
+  padding: 30px 20px;
+  text-align: center;
+  position: relative;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.ios-modal.show .ios-modal-content {
+  transform: translateY(0);
+}
+
+.ios-modal-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.ios-step {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  text-align: right;
+}
+
+[dir="ltr"] .ios-step {
+  text-align: left;
+}
+
+.ios-step-num {
+  background: var(--primary);
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.close-modal {
+  background: var(--primary);
+  color: white;
+  padding: 10px 30px;
+  border-radius: 12px;
+  margin-top: 20px;
+  font-weight: 700;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .hero h1 {
