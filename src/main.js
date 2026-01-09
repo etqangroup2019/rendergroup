@@ -121,9 +121,10 @@ function renderHome() {
           <input 
             type="text" 
             id="searchInput" 
+            dir="auto"
             placeholder="${t('searchPlaceholder')}" 
             value="${state.searchQuery}"
-            style="width: 100%; padding: 12px 45px; border-radius: 50px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text); font-size: 1rem; outline: none; transition: border-color 0.3s;"
+            style="width: 100%; padding: 12px 45px; border-radius: 50px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text); font-size: 1rem; outline: none; transition: border-color 0.3s; text-align: ${state.lang === 'ar' ? 'right' : 'left'};"
           >
         </div>
       </div>
