@@ -104,7 +104,20 @@ function attachGlobalListeners() {
 }
 
 function renderHome() {
-  const filteredArtists = artists.filter(artist => 
+  const renderArtists = (filtered) => {
+    return filtered.map(artist => `
+      <div class="card fade-in">
+        <img src="${artist.avatar}" alt="${artist.name[state.lang]}" class="card-img">
+        <div class="card-content">
+          <div class="card-title">${artist.name[state.lang]}</div>
+          <div class="card-info">${artist.specialty[state.lang]}</div>
+          <button class="btn btn-primary view-btn" data-id="${artist.id}" style="width: 100%;">${t('viewProfile')}</button>
+        </div>
+      </div>
+    `).join('') + (filtered.length === 0 ? `<p style="text-align: center; color: var(--text-muted); grid-column: 1 / -1;">${state.lang === 'ar' ? 'لا توجد نتائج' : 'No results found'}</p>` : '');
+  };
+
+  const filteredArtists = artists.filter(artist =>
     artist.name[state.lang].toLowerCase().includes(state.searchQuery.toLowerCase()) ||
     artist.name['ar'].toLowerCase().includes(state.searchQuery.toLowerCase()) ||
     artist.name['en'].toLowerCase().includes(state.searchQuery.toLowerCase())
@@ -131,39 +144,41 @@ function renderHome() {
     </header>
 
     <main class="container">
-      <div class="artist-grid">
-        ${filteredArtists.map(artist => `
-          <div class="card fade-in">
-            <img src="${artist.avatar}" alt="${artist.name[state.lang]}" class="card-img">
-            <div class="card-content">
-              <div class="card-title">${artist.name[state.lang]}</div>
-              <div class="card-info">${artist.specialty[state.lang]}</div>
-              <button class="btn btn-primary view-btn" data-id="${artist.id}" style="width: 100%;">${t('viewProfile')}</button>
-            </div>
-          </div>
-        `).join('')}
-        ${filteredArtists.length === 0 ? `<p style="text-align: center; color: var(--text-muted); grid-column: 1 / -1;">لا توجد نتائج</p>` : ''}
+      <div class="artist-grid" id="artistGrid">
+        ${renderArtists(filteredArtists)}
       </div>
     </main>
   `;
 
   attachGlobalListeners();
-  
+
+  const attachViewBtnListeners = () => {
+    document.querySelectorAll('.view-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = parseInt(e.target.dataset.id);
+        const artist = artists.find(a => a.id === id);
+        setState({ page: 'detail', selectedArtist: artist });
+      });
+    });
+  };
+
+  attachViewBtnListeners();
+
   // Search input listener
   const searchInput = document.getElementById('searchInput');
+  const artistGrid = document.getElementById('artistGrid');
+
   searchInput?.addEventListener('input', (e) => {
     state.searchQuery = e.target.value;
-    renderHome();
-    // Keep focus on input after re-render
-    document.getElementById('searchInput')?.focus();
-  });
-
-  document.querySelectorAll('.view-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const id = parseInt(e.target.dataset.id);
-      const artist = artists.find(a => a.id === id);
-      setState({ page: 'detail', selectedArtist: artist });
-    });
+    const newFiltered = artists.filter(artist =>
+      artist.name[state.lang].toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+      artist.name['ar'].toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+      artist.name['en'].toLowerCase().includes(state.searchQuery.toLowerCase())
+    );
+    if (artistGrid) {
+      artistGrid.innerHTML = renderArtists(newFiltered);
+      attachViewBtnListeners();
+    }
   });
 }
 
