@@ -8,7 +8,8 @@ let state = {
   page: 'home',
   selectedArtist: null,
   lang: localStorage.getItem('lang') || 'ar',
-  theme: localStorage.getItem('theme') || 'dark'
+  theme: localStorage.getItem('theme') || 'dark',
+  searchQuery: ''
 };
 
 function setState(newState, pushHistory = true) {
@@ -103,16 +104,34 @@ function attachGlobalListeners() {
 }
 
 function renderHome() {
+  const filteredArtists = artists.filter(artist => 
+    artist.name[state.lang].toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+    artist.name['ar'].toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+    artist.name['en'].toLowerCase().includes(state.searchQuery.toLowerCase())
+  );
+
   app.innerHTML = `
     ${getNavbar()}
     <header class="hero container fade-in">
       <h1>${t('heroTitle').replace('الواقعية الخيالية', `<span style="color: var(--primary)">الواقعية الخيالية</span>`)}</h1>
       <p>${t('heroDesc')}</p>
+      <div class="search-box" style="margin-top: 25px; max-width: 400px; margin-left: auto; margin-right: auto;">
+        <div style="position: relative;">
+          <i class="fas fa-search" style="position: absolute; top: 50%; transform: translateY(-50%); ${state.lang === 'ar' ? 'right: 15px' : 'left: 15px'}; color: var(--text-muted);"></i>
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="${t('searchPlaceholder')}" 
+            value="${state.searchQuery}"
+            style="width: 100%; padding: 12px 45px; border-radius: 50px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text); font-size: 1rem; outline: none; transition: border-color 0.3s;"
+          >
+        </div>
+      </div>
     </header>
 
     <main class="container">
       <div class="artist-grid">
-        ${artists.map(artist => `
+        ${filteredArtists.map(artist => `
           <div class="card fade-in">
             <img src="${artist.avatar}" alt="${artist.name[state.lang]}" class="card-img">
             <div class="card-content">
@@ -122,11 +141,22 @@ function renderHome() {
             </div>
           </div>
         `).join('')}
+        ${filteredArtists.length === 0 ? `<p style="text-align: center; color: var(--text-muted); grid-column: 1 / -1;">لا توجد نتائج</p>` : ''}
       </div>
     </main>
   `;
 
   attachGlobalListeners();
+  
+  // Search input listener
+  const searchInput = document.getElementById('searchInput');
+  searchInput?.addEventListener('input', (e) => {
+    state.searchQuery = e.target.value;
+    renderHome();
+    // Keep focus on input after re-render
+    document.getElementById('searchInput')?.focus();
+  });
+
   document.querySelectorAll('.view-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = parseInt(e.target.dataset.id);

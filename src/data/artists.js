@@ -15,7 +15,8 @@ export const translations = {
     darkMode: "وضع مظلم",
     langName: "English",
     specialty: "التخصص",
-    bio: "السيرة الذاتية"
+    bio: "السيرة الذاتية",
+    searchPlaceholder: "ابحث عن فنان..."
   },
   en: {
     title: "Render Hub",
@@ -30,7 +31,8 @@ export const translations = {
     darkMode: "Dark Mode",
     langName: "العربية",
     specialty: "Specialty",
-    bio: "Bio"
+    bio: "Bio",
+    searchPlaceholder: "Search for an artist..."
   }
 };
 
