@@ -146,6 +146,7 @@ nav {
 
 .card-content {
   padding: 1.5rem;
+  text-align: center;
 }
 
 .card-title {
@@ -179,10 +180,12 @@ nav {
 
 /* Artist Detail Page */
 .detail-header {
-  padding: 80px 0;
+  padding: 60px 0;
   display: flex;
-  gap: 3rem;
+  flex-direction: column;
+  gap: 1.5rem;
   align-items: center;
+  text-align: center;
 }
 
 .artist-avatar {
@@ -198,6 +201,7 @@ nav {
   gap: 1rem;
   flex-wrap: wrap;
   margin-top: 1.5rem;
+  justify-content: center;
 }
 
 .social-btn {
