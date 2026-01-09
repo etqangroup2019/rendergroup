@@ -1,6 +1,6 @@
 export const alaa = {
     id: 2,
-    name: { ar: "علاء الراجل", en: "Alaa Al-Ragel" },
+    name: { ar: "م. علاء الراجل", en: "Eng. Alaa Al-Ragel" },
     specialty: { ar: "تصميم وإظهار معمارى", en: "Architectural Design & Visualization" },
     bio: {
         ar: "متخصص في التصميم والإظهار المعماري مع خبرة واسعة في خلق مناظر واقعية.",

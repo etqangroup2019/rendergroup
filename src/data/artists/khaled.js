@@ -1,6 +1,6 @@
 export const khaled = {
     id: 1,
-    name: { ar: "خالد النويصري", en: "Khaled Al-Nwesary" },
+    name: { ar: "م. خالد النويصري", en: "Eng. Khaled Al-Nwesary" },
     specialty: { ar: "رندر معماري متقدم", en: "Advanced Architectural Render" },
     bio: {
         ar: "خبير في الإظهار المعماري والنمذجة ثلاثية الأبعاد، مؤسس مجموعة إتقان.",
