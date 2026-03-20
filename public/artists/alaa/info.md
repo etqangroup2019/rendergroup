@@ -51,9 +51,9 @@ Architectural Design & Visualization
 Specialized in architectural design and visualization with extensive experience in creating realistic views.
 
 ## Collaboration Terms
-Precision in details and commitment to time are our priorities.
-Flexible payment options available.
-Free consultation for new clients.
+1. Precision in details and commitment to time are our priorities.
+2. Flexible payment options available.
+3. Free consultation for new clients.
 
 ## Collaboration Process
 1. Contact via WhatsApp for initial discussion
