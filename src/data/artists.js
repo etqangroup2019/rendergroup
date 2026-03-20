@@ -1,6 +1,3 @@
-import { khaled } from './artists/khaled.js';
-import { alaa } from './artists/alaa.js';
-
 export const translations = {
   ar: {
     title: "Render Hub",
@@ -45,8 +42,3 @@ export const translations = {
     close: "Close"
   }
 };
-
-export const artists = [
-  khaled,
-  alaa
-];

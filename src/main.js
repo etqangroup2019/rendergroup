@@ -1,5 +1,6 @@
 import './style.css';
-import { artists, translations } from './data/artists.js';
+import { translations } from './data/artists.js';
+import { loadAllArtists } from './utils/artistLoader.js';
 
 const app = document.querySelector('#app');
 
@@ -9,8 +10,36 @@ let state = {
   selectedArtist: null,
   lang: localStorage.getItem('lang') || 'ar',
   theme: localStorage.getItem('theme') || 'dark',
-  searchQuery: ''
+  searchQuery: '',
+  loading: true
 };
+
+// تحميل الفنانين ديناميكياً
+let artists = [];
+loadAllArtists().then(loadedArtists => {
+  artists = loadedArtists;
+  state.loading = false;
+  
+  // التحقق من URL بعد تحميل الفنانين
+  const urlParams = new URLSearchParams(window.location.search);
+  const artistId = parseInt(urlParams.get('artist'));
+  if (artistId) {
+    const artist = artists.find(a => a.id === artistId);
+    if (artist) {
+      state.page = 'detail';
+      state.selectedArtist = artist;
+      window.history.replaceState({ page: 'detail', artistId }, '', window.location.href);
+    }
+  } else {
+    window.history.replaceState({ page: 'home', artistId: null }, '', window.location.href);
+  }
+  
+  render();
+}).catch(error => {
+  console.error('Error loading artists:', error);
+  state.loading = false;
+  render();
+});
 
 // PWA Installation
 let deferredPrompt;
@@ -78,6 +107,28 @@ function updateDir() {
 }
 
 const t = (key) => translations[state.lang][key];
+
+function formatContent(text) {
+  if (!text) return '';
+  
+  // تقسيم النص إلى أسطر
+  const lines = text.split('\n').filter(line => line.trim());
+  
+  return lines.map(line => {
+    const trimmed = line.trim();
+    
+    // إذا كان السطر يبدأ برقم متبوع بنقطة (مثل "1." أو "١.")
+    if (/^[\d\u0660-\u0669]+\./.test(trimmed)) {
+      return `<div class="list-item">
+        <span class="list-number">${trimmed.match(/^[\d\u0660-\u0669]+/)[0]}</span>
+        <span class="list-text">${trimmed.replace(/^[\d\u0660-\u0669]+\.\s*/, '')}</span>
+      </div>`;
+    }
+    
+    // إذا كان سطر عادي
+    return `<div class="text-line">${trimmed}</div>`;
+  }).join('');
+}
 
 function render() {
   if (state.page === 'home') {
@@ -176,6 +227,23 @@ function getIOSModal() {
 }
 
 function renderHome() {
+  // عرض شاشة التحميل
+  if (state.loading) {
+    app.innerHTML = `
+      ${getNavbar()}
+      <div class="container" style="text-align: center; padding: 100px 20px;">
+        <div style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <p style="color: var(--text-muted); font-size: 1.2rem;">
+          ${state.lang === 'ar' ? 'جاري التحميل...' : 'Loading...'}
+        </p>
+      </div>
+    `;
+    attachGlobalListeners();
+    return;
+  }
+
   const renderArtists = (filtered) => {
     return filtered.map(artist => `
       <div class="card fade-in">
@@ -275,15 +343,17 @@ function renderDetail(artist) {
           
           <div class="social-links">
             ${Object.entries(artist.socials).map(([platform, url]) => {
-    const icons = {
-      whatsapp: 'fab fa-whatsapp',
-      telegram: 'fab fa-telegram-plane',
-      facebook: 'fab fa-facebook-f',
-      instagram: 'fab fa-instagram',
-      gmail: 'far fa-envelope',
-      youtube: 'fab fa-youtube'
+    const socialConfig = {
+      whatsapp: { icon: 'fab fa-whatsapp', color: '#25D366' },
+      telegram: { icon: 'fab fa-telegram-plane', color: '#0088cc' },
+      facebook: { icon: 'fab fa-facebook-f', color: '#1877f2' },
+      instagram: { icon: 'fab fa-instagram', color: '#E4405F' },
+      gmail: { icon: 'far fa-envelope', color: '#ea4335' },
+      email: { icon: 'far fa-envelope', color: '#ea4335' },
+      youtube: { icon: 'fab fa-youtube', color: '#ff0000' }
     };
-    return `<a href="${url}" target="_blank" class="social-btn ${platform}"><i class="${icons[platform] || 'fas fa-link'}"></i></a>`;
+    const config = socialConfig[platform] || { icon: 'fas fa-link', color: 'var(--primary)' };
+    return `<a href="${url}" target="_blank" class="social-btn ${platform}"><i class="${config.icon}" style="color: ${config.color};"></i></a>`;
   }).join('')}
           </div>
         </div>
@@ -292,49 +362,281 @@ function renderDetail(artist) {
 
     <section class="container fade-in" style="margin-top: 40px;">
       <h2 style="border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 5px;">${t('termsTitle')}</h2>
-      <p style="margin-top: 15px; background: var(--card-bg); padding: 20px; border-radius: 12px; border-${state.lang === 'ar' ? 'right' : 'left'}: 4px solid var(--primary);">
-        ${artist.terms[state.lang]}
-      </p>
+      <div class="terms-content">
+        ${formatContent(artist.terms[state.lang])}
+      </div>
     </section>
+
+    ${artist.process && artist.process[state.lang] ? `
+    <section class="container fade-in" style="margin-top: 40px;">
+      <h2 style="border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 5px;">${state.lang === 'ar' ? 'طريقة التعاون' : 'Collaboration Process'}</h2>
+      <div class="process-content">
+        ${formatContent(artist.process[state.lang])}
+      </div>
+    </section>
+    ` : ''}
 
     <section class="container fade-in" style="margin-top: 60px; padding-bottom: 100px;">
       <h2 style="margin-bottom: 30px;">${t('galleryTitle')}</h2>
-      <div class="gallery">
-        ${artist.works.map(work => `
-          <div class="gallery-item">
-            <img src="${work}" alt="Project Work">
-          </div>
-        `).join('')}
-      </div>
+      ${artist.works && artist.works.length > 0 ? `
+        <div class="gallery">
+          ${artist.works.map((work, idx) => `
+            <div class="gallery-item" data-index="${idx}">
+              <img src="${work}" alt="Project Work" loading="lazy">
+            </div>
+          `).join('')}
+        </div>
+      ` : `
+        <div style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
+          <i class="fas fa-images" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.3;"></i>
+          <p>${state.lang === 'ar' ? 'لا توجد أعمال متاحة حالياً' : 'No works available at the moment'}</p>
+        </div>
+      `}
     </section>
+    
+    <!-- Image Lightbox -->
+    <div id="lightbox" class="lightbox">
+      <button class="lightbox-close" id="lightboxClose">
+        <i class="fas fa-times"></i>
+      </button>
+      <button class="lightbox-nav lightbox-prev" id="lightboxPrev">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button class="lightbox-nav lightbox-next" id="lightboxNext">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+      <div class="lightbox-content">
+        <img id="lightboxImage" src="" alt="Full size image">
+      </div>
+      <div class="lightbox-counter" id="lightboxCounter"></div>
+    </div>
   `;
 
   attachGlobalListeners();
+  attachLightboxListeners(artist.works);
+}
+
+function attachLightboxListeners(works) {
+  if (!works || works.length === 0) return;
+
+  let currentIndex = 0;
+  let scale = 1;
+  let isDragging = false;
+  let startX = 0;
+  let startY = 0;
+  let translateX = 0;
+  let translateY = 0;
+
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImage = document.getElementById('lightboxImage');
+  const lightboxClose = document.getElementById('lightboxClose');
+  const lightboxPrev = document.getElementById('lightboxPrev');
+  const lightboxNext = document.getElementById('lightboxNext');
+  const lightboxCounter = document.getElementById('lightboxCounter');
+  const galleryItems = document.querySelectorAll('.gallery-item');
+
+  function showImage(index) {
+    currentIndex = index;
+    const imgSrc = works[index];
+    
+    // Show loading state
+    lightboxImage.style.opacity = '0.5';
+    
+    // Create a new image to test loading
+    const testImg = new Image();
+    testImg.onload = () => {
+      lightboxImage.src = imgSrc;
+      lightboxImage.style.opacity = '1';
+      lightboxCounter.textContent = `${index + 1} / ${works.length}`;
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      resetTransform();
+      
+      // Preload next and previous images
+      if (works[index + 1]) {
+        const nextImg = new Image();
+        nextImg.src = works[index + 1];
+      }
+      if (works[index - 1]) {
+        const prevImg = new Image();
+        prevImg.src = works[index - 1];
+      }
+    };
+    testImg.onerror = () => {
+      console.error('Failed to load image:', imgSrc);
+      lightboxImage.style.opacity = '1';
+      // Try to show anyway
+      lightboxImage.src = imgSrc;
+      lightboxCounter.textContent = `${index + 1} / ${works.length}`;
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      resetTransform();
+    };
+    testImg.src = imgSrc;
+  }
+
+  function resetTransform() {
+    scale = 1;
+    translateX = 0;
+    translateY = 0;
+    updateTransform();
+  }
+
+  function updateTransform() {
+    lightboxImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+    resetTransform();
+  }
+
+  function showNext() {
+    currentIndex = (currentIndex + 1) % works.length;
+    showImage(currentIndex);
+  }
+
+  function showPrev() {
+    currentIndex = (currentIndex - 1 + works.length) % works.length;
+    showImage(currentIndex);
+  }
+
+  // Gallery item clicks
+  galleryItems.forEach((item, index) => {
+    item.addEventListener('click', () => {
+      // Get the actual image src from the gallery item
+      const imgElement = item.querySelector('img');
+      if (imgElement && imgElement.src) {
+        showImage(index);
+      }
+    });
+  });
+
+  // Close button
+  lightboxClose.addEventListener('click', closeLightbox);
+
+  // Navigation buttons
+  lightboxNext.addEventListener('click', showNext);
+  lightboxPrev.addEventListener('click', showPrev);
+
+  // Click outside image to close
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox.classList.contains('active')) return;
+    
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowRight') showNext();
+    if (e.key === 'ArrowLeft') showPrev();
+  });
+
+  // Zoom with mouse wheel
+  lightboxImage.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.1 : 0.1;
+    scale = Math.min(Math.max(1, scale + delta), 5);
+    updateTransform();
+  });
+
+  // Drag to pan when zoomed
+  lightboxImage.addEventListener('mousedown', (e) => {
+    if (scale > 1) {
+      isDragging = true;
+      startX = e.clientX - translateX;
+      startY = e.clientY - translateY;
+      lightboxImage.style.cursor = 'grabbing';
+    }
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+      translateX = e.clientX - startX;
+      translateY = e.clientY - startY;
+      updateTransform();
+    }
+  });
+
+  document.addEventListener('mouseup', () => {
+    isDragging = false;
+    lightboxImage.style.cursor = scale > 1 ? 'grab' : 'default';
+  });
+
+  // Touch support for mobile
+  let touchStartDistance = 0;
+  let initialScale = 1;
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  lightboxImage.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) {
+      // Pinch to zoom
+      e.preventDefault();
+      touchStartDistance = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      initialScale = scale;
+    } else if (e.touches.length === 1 && scale > 1) {
+      // Pan when zoomed
+      e.preventDefault();
+      isDragging = true;
+      touchStartX = e.touches[0].clientX - translateX;
+      touchStartY = e.touches[0].clientY - translateY;
+    }
+  }, { passive: false });
+
+  lightboxImage.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      const distance = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      scale = Math.min(Math.max(1, initialScale * (distance / touchStartDistance)), 5);
+      updateTransform();
+    } else if (isDragging && e.touches.length === 1) {
+      e.preventDefault();
+      translateX = e.touches[0].clientX - touchStartX;
+      translateY = e.touches[0].clientY - touchStartY;
+      updateTransform();
+    }
+  }, { passive: false });
+
+  lightboxImage.addEventListener('touchend', (e) => {
+    isDragging = false;
+  });
+
+  // Double tap to zoom
+  let lastTap = 0;
+  lightboxImage.addEventListener('touchend', (e) => {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTap;
+    if (tapLength < 300 && tapLength > 0) {
+      e.preventDefault();
+      if (scale === 1) {
+        scale = 2.5;
+      } else {
+        resetTransform();
+      }
+      updateTransform();
+    }
+    lastTap = currentTime;
+  });
 }
 
 // Initial
-const urlParams = new URLSearchParams(window.location.search);
-const artistId = parseInt(urlParams.get('artist'));
-if (artistId) {
-  const artist = artists.find(a => a.id === artistId);
-  if (artist) {
-    state.page = 'detail';
-    state.selectedArtist = artist;
-    // Replace current state so back button works correctly from start
-    window.history.replaceState({ page: 'detail', artistId }, '', window.location.href);
-  }
-} else {
-  window.history.replaceState({ page: 'home', artistId: null }, '', window.location.href);
-}
-
 updateTheme();
 updateDir();
 render();
 
 // Service Worker Registration with Auto-Update
-if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
-    const swPath = import.meta.env.DEV ? '/sw.js' : 'sw.js';
+    const swPath = 'sw.js';
     navigator.serviceWorker.register(swPath)
       .then(reg => {
         console.log('SW Registered');

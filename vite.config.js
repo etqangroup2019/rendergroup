@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-    base: '/rendergroup/', // Specific base path for the repository
+    base: process.env.NODE_ENV === 'production' ? '/rendergroup/' : '/',
     build: {
         outDir: 'dist',
     },
