@@ -348,6 +348,7 @@ function renderDetail(artist) {
       telegram: { icon: 'fab fa-telegram-plane', color: '#0088cc' },
       facebook: { icon: 'fab fa-facebook-f', color: '#1877f2' },
       instagram: { icon: 'fab fa-instagram', color: '#E4405F' },
+      behance: { icon: 'fab fa-behance', color: '#1769ff' },
       gmail: { icon: 'far fa-envelope', color: '#ea4335' },
       email: { icon: 'far fa-envelope', color: '#ea4335' },
       youtube: { icon: 'fab fa-youtube', color: '#ff0000' }
@@ -360,13 +361,6 @@ function renderDetail(artist) {
       </div>
     </header>
 
-    <section class="container fade-in" style="margin-top: 40px;">
-      <h2 style="border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 5px;">${t('termsTitle')}</h2>
-      <div class="terms-content">
-        ${formatContent(artist.terms[state.lang])}
-      </div>
-    </section>
-
     ${artist.process && artist.process[state.lang] ? `
     <section class="container fade-in" style="margin-top: 40px;">
       <h2 style="border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 5px;">${state.lang === 'ar' ? 'طريقة التعاون' : 'Collaboration Process'}</h2>
@@ -375,6 +369,13 @@ function renderDetail(artist) {
       </div>
     </section>
     ` : ''}
+
+    <section class="container fade-in" style="margin-top: 40px;">
+      <h2 style="border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 5px;">${t('termsTitle')}</h2>
+      <div class="terms-content">
+        ${formatContent(artist.terms[state.lang])}
+      </div>
+    </section>
 
     <section class="container fade-in" style="margin-top: 60px; padding-bottom: 100px;">
       <h2 style="margin-bottom: 30px;">${t('galleryTitle')}</h2>
@@ -408,15 +409,18 @@ function renderDetail(artist) {
       <div class="lightbox-content">
         <img id="lightboxImage" src="" alt="Full size image">
       </div>
-      <div class="lightbox-counter" id="lightboxCounter"></div>
+      <div class="lightbox-info">
+        <div class="lightbox-counter" id="lightboxCounter"></div>
+        <div class="lightbox-description" id="lightboxDescription"></div>
+      </div>
     </div>
   `;
 
   attachGlobalListeners();
-  attachLightboxListeners(artist.works);
+  attachLightboxListeners(artist.works, artist.imageDescriptions || { ar: [], en: [] });
 }
 
-function attachLightboxListeners(works) {
+function attachLightboxListeners(works, descriptions) {
   if (!works || works.length === 0) return;
 
   let currentIndex = 0;
@@ -433,6 +437,7 @@ function attachLightboxListeners(works) {
   const lightboxPrev = document.getElementById('lightboxPrev');
   const lightboxNext = document.getElementById('lightboxNext');
   const lightboxCounter = document.getElementById('lightboxCounter');
+  const lightboxDescription = document.getElementById('lightboxDescription');
   const galleryItems = document.querySelectorAll('.gallery-item');
 
   function showImage(index) {
@@ -448,6 +453,16 @@ function attachLightboxListeners(works) {
       lightboxImage.src = imgSrc;
       lightboxImage.style.opacity = '1';
       lightboxCounter.textContent = `${index + 1} / ${works.length}`;
+      
+      // Show description if available (use current language)
+      const currentDescriptions = descriptions[state.lang] || descriptions.ar || [];
+      if (currentDescriptions && currentDescriptions[index]) {
+        lightboxDescription.textContent = currentDescriptions[index];
+        lightboxDescription.style.display = 'block';
+      } else {
+        lightboxDescription.style.display = 'none';
+      }
+      
       lightbox.classList.add('active');
       document.body.style.overflow = 'hidden';
       resetTransform();
@@ -468,6 +483,16 @@ function attachLightboxListeners(works) {
       // Try to show anyway
       lightboxImage.src = imgSrc;
       lightboxCounter.textContent = `${index + 1} / ${works.length}`;
+      
+      // Show description if available (use current language)
+      const currentDescriptions = descriptions[state.lang] || descriptions.ar || [];
+      if (currentDescriptions && currentDescriptions[index]) {
+        lightboxDescription.textContent = currentDescriptions[index];
+        lightboxDescription.style.display = 'block';
+      } else {
+        lightboxDescription.style.display = 'none';
+      }
+      
       lightbox.classList.add('active');
       document.body.style.overflow = 'hidden';
       resetTransform();

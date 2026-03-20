@@ -17,11 +17,13 @@ function parseMD(content) {
     bio: { ar: '', en: '' },
     terms: { ar: '', en: '' },
     process: { ar: '', en: '' },
-    socials: {}
+    socials: {},
+    imageDescriptions: { ar: [], en: [] }
   };
 
   let currentSection = '';
   let currentLang = null; // null, 'en', or 'ar'
+  let inImageDescriptions = false;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
@@ -29,9 +31,11 @@ function parseMD(content) {
     // تحديد اللغة الحالية من الأقسام
     if (line.includes('<a name="english"></a>')) {
       currentLang = 'en';
+      inImageDescriptions = false;
       continue;
     } else if (line.includes('<a name="arabic"></a>')) {
       currentLang = 'ar';
+      inImageDescriptions = false;
       continue;
     }
 
@@ -51,18 +55,27 @@ function parseMD(content) {
       const sectionTitle = line.substring(3).toLowerCase();
       if (sectionTitle.includes('تخصص') || sectionTitle.includes('specialty')) {
         currentSection = 'specialty';
+        inImageDescriptions = false;
       } else if (sectionTitle.includes('سيرة') || sectionTitle.includes('bio')) {
         currentSection = 'bio';
+        inImageDescriptions = false;
       } else if (sectionTitle.includes('شروط') || sectionTitle.includes('terms')) {
         currentSection = 'terms';
+        inImageDescriptions = false;
       } else if (sectionTitle.includes('طريقة') || sectionTitle.includes('process') || sectionTitle.includes('workflow')) {
         currentSection = 'process';
+        inImageDescriptions = false;
       } else if (sectionTitle.includes('تواصل') || sectionTitle.includes('contact')) {
         currentSection = 'contact';
+        inImageDescriptions = false;
+      } else if (sectionTitle.includes('وصف الصور') || sectionTitle.includes('image descriptions')) {
+        currentSection = 'imageDescriptions';
+        inImageDescriptions = true;
       } else {
         // إذا كان قسم غير معروف، نعيد تعيين القسم
         if (!sectionTitle.includes('english') && !sectionTitle.includes('arabic')) {
           currentSection = '';
+          inImageDescriptions = false;
         }
       }
       continue;
@@ -79,9 +92,20 @@ function parseMD(content) {
       continue;
     }
 
+    // استخراج أوصاف الصور حسب اللغة
+    if (inImageDescriptions && currentLang && line.match(/^\d+\./)) {
+      const description = line.replace(/^\d+\.\s*/, '').trim();
+      if (currentLang === 'ar') {
+        data.imageDescriptions.ar.push(description);
+      } else if (currentLang === 'en') {
+        data.imageDescriptions.en.push(description);
+      }
+      continue;
+    }
+
     // استخراج المحتوى النصي حسب اللغة الحالية (دعم أسطر متعددة)
     if (line && !line.startsWith('#') && !line.startsWith('-') && !line.startsWith('<') && !line.startsWith('[') && currentSection && currentLang) {
-      if (currentSection !== 'contact') {
+      if (currentSection !== 'contact' && currentSection !== 'imageDescriptions') {
         if (currentLang === 'en') {
           // إضافة النص مع فاصل سطر إذا كان هناك محتوى سابق
           if (data[currentSection].en) {
@@ -176,7 +200,8 @@ async function loadArtist(folderName, index) {
       works: works,
       terms: artistData.terms,
       process: artistData.process,
-      socials: artistData.socials
+      socials: artistData.socials,
+      imageDescriptions: artistData.imageDescriptions
     };
   } catch (error) {
     console.error(`Error loading artist ${folderName}:`, error);

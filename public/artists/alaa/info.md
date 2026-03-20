@@ -1,10 +1,12 @@
 ## Contact Information | معلومات التواصل
 
-- WhatsApp: https://wa.me/218917085670
-- Telegram: https://t.me/+218917085670
-- Facebook: https://www.facebook.com/share/18CKNTW3Qo/?mibextid=wwXIfr
-- Instagram: https://www.instagram.com/ragel_ala?igsh=c2Ruc2x4dTlsOTM0&utm_source=qr
-- Email: alragel@outlook.com
+- WhatsApp: https://wa.me/218928198656
+- Telegram: https://t.me/+218928198656
+- Instagram: https://www.instagram.com/
+- Facebook: https://www.facebook.com/KhaledAlnwesary/
+- Email: etqangroup2019@gmail.com
+- Behance: https://www.behance.net/mstrben88a928
+- YouTube: https://www.youtube.com/@%D8%AE%D8%A7%D9%84%D8%AF%D8%A7%D9%84%D9%86%D9%88%D9%8A%D8%B5%D8%B1%D9%8A
 
 ---
 
@@ -23,19 +25,29 @@
 ## السيرة الذاتية
 متخصص في التصميم والإظهار المعماري مع خبرة واسعة في خلق مناظر واقعية.
 
-## شروط التعاون
-1. نلتزم بالجودة العالية والمواعيد الدقيقة.
-2. جميع المشاريع تشمل تعديلين مجانيين.
-3. الدفع: 50% مقدم، 50% عند التسليم.
-
 ## طريقة التعاون
-1. التواصل عبر الواتساب للمناقشة الأولية
-2. مشاركة تفاصيل ومتطلبات المشروع
-3. استلام عرض السعر والمدة الزمنية المتوقعة
-4. الاتفاق وترتيب الدفع
-5. بدء العمل مع تحديثات منتظمة
-6. جلسات المراجعة والملاحظات
-7. التسليم النهائي مع الدعم الكامل
+1. التجهيز : يقوم المصمم بتجهيز ملف المشروع بشكل نهائي ومكتمل تماماً قبل الإرسال.
+2. المراجعة  : يتم إرسال ملف المشروع للاطلاع عليه، مع توضيح المتطلبات الأساسية بشكل كامل.
+3. التسعير والمدة : بعد مراجعة الملف، سيتم الرد بالوقت المتوقع والتكلفة خلال يوم أو يومين عمل.
+4. مرحلة الاختبار (Test) : في حال الموافقة على الوقت والسعر، يتم البدء في تجهيز نسخة تجريبية للمشروع.
+5. الاعتماد والدفع : بعد مراجعة النموذج التجريبي وتقديم الملاحظات واعتماده، يتم تحويل المبلغ المتفق عليه.
+6. التسليم النهائي : نبدأ في تجهيز الملفات النهائية، ويتم إرسالها بعد استلام كامل المبلغ.
+
+## شروط العمل
+1. الوضوح : يجب تحديد كافة المتطلبات والملاحظات بدقة قبل البدء في التنفيذ.
+2. الملفات : يلتزم المصمم بتقديم ملفات نظيفة واحترافية خالية من أخطاء الرسم أو النواقص.
+3. الدفع : لا يتم تسليم الملفات النهائية للمشروع إلا بعد استلام كامل المبلغ المتفق عليه.
+4. التأخير : أي تأخير من العميل في الرد بعد إرسال النموذج التجريبي (Test) يتم إضافته إلى الوقت المتفق عليه مسبقاً.
+5. التعديلات : يسمح بـ 3 تعديلات كحد أقصى على النموذج التجريبي، وأي تعديلات إضافية قد تخضع لرسوم إضافية.
+6. الطلبات الخاصة : أي متطلبات خاصة تتعلق بحقوق النشر، أو النشر الإلكتروني، أو قيود الاستخدام، يجب توضيحها في بداية الاتفاق قبل البدء.
+
+## وصف الصور
+1. مشروع من تصميم مكتب القادس - طرابلس
+2. مشروع من تصميم مكتب القادس - طرابلس
+3. مشروع من تصميم مكتب القادس - طرابلس
+4. مشروع من تصميم مكتب القادس - طرابلس
+5. مشروع من تصميم مكتب القادس - طرابلس
+6. مشروع من تصميم مكتب القادس - طرابلس
 
 ---
 
@@ -50,16 +62,22 @@ Architectural Design & Visualization
 ## Bio
 Specialized in architectural design and visualization with extensive experience in creating realistic views.
 
-## Collaboration Terms
-1. Precision in details and commitment to time are our priorities.
-2. Flexible payment options available.
-3. Free consultation for new clients.
-
 ## Collaboration Process
-1. Contact via WhatsApp for initial discussion
-2. Share project details and requirements
-3. Receive quote and estimated timeline
-4. Agreement and payment arrangement
-5. Work begins with regular updates
-6. Review and feedback sessions
-7. Final delivery with full support
+1. Preparation: The designer prepares the project file in its final, fully completed form before sending.
+2. Review: The project file is sent for review, accompanied by a comprehensive explanation of all core requirements.
+3. Quotation & Timeline: After reviewing the file, a response regarding the estimated timeframe and cost will be provided within one to two business days.
+4. Testing Phase: Upon agreement on the time and price, work begins on a trial version (test sample) of the project.
+5. Approval & Payment: Once the trial version is reviewed, feedback is provided, and the sample is approved, the agreed-upon amount is transferred.
+6. Final Delivery: We begin preparing the final files, which are sent immediately upon receipt of the full payment.
+
+## Collaboration Terms
+1. Clarity: All requirements and notes must be precisely defined before execution begins.
+2. File Quality: The designer is committed to providing clean, professional files free of drawing errors or missing elements.
+3. Payment: Final project files will not be delivered until the full agreed-upon amount has been received.
+4. Delays: Any delay by the client in responding after the trial version (Test) is sent will be added to the previously agreed timeline.
+5. Revisions: A maximum of 3 revisions are permitted on the trial version. Any additional revisions may be subject to extra fees.
+6. Special Requests: Any special requirements regarding copyrights, digital publishing, or usage restrictions must be clarified at the start of the agreement before work commences.
+
+## Image Descriptions
+1. Residential project - Contemporary interior design
+2. Private villa - Modern exterior facade
