@@ -354,7 +354,16 @@ function renderDetail(artist) {
       youtube: { icon: 'fab fa-youtube', color: '#ff0000' }
     };
     const config = socialConfig[platform] || { icon: 'fas fa-link', color: 'var(--primary)' };
-    return `<a href="${url}" target="_blank" class="social-btn ${platform}"><i class="${config.icon}" style="color: ${config.color};"></i></a>`;
+    
+    // تحويل جميع الإيميلات إلى رابط Gmail
+    let finalUrl = url;
+    if (platform === 'email' || platform === 'gmail') {
+      const emailAddress = url.replace('mailto:', '').trim();
+      // استخدام Gmail لجميع الإيميلات
+      finalUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailAddress}`;
+    }
+    
+    return `<a href="${finalUrl}" target="_blank" class="social-btn ${platform}"><i class="${config.icon}" style="color: ${config.color};"></i></a>`;
   }).join('')}
           </div>
         </div>
