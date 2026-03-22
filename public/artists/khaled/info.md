@@ -63,28 +63,50 @@
 Advanced Architectural Render
 
 ## Bio
-Expert in architectural visualization and 3D modeling, founder of Etqan Group.
+Expert in architectural visualization and 3D rendering , founder of Etqan Group.
 
 ## Collaboration Process
-1. Preparation: The designer prepares the project file in its final, fully completed form before sending.
-2. Review: The project file is sent for review, accompanied by a comprehensive explanation of all core requirements.
-3. Quotation & Timeline: After reviewing the file, a response regarding the estimated timeframe and cost will be provided within one to two business days.
-4. Testing Phase: Upon agreement on the time and price, work begins on a trial version (test sample) of the project.
-5. Approval & Payment: Once the trial version is reviewed, feedback is provided, and the sample is approved, the agreed-upon amount is transferred.
-6. Final Delivery: We begin preparing the final files, which are sent immediately upon receipt of the full payment.
+1. Preparation: The designer ensures the project file is fully finalized and complete before submission.
+
+2. Review: The project file is submitted for review, accompanied by a comprehensive explanation of all primary requirements.
+
+3. Pricing & Timeline: Following the review, a response regarding the expected timeframe and cost will be provided within one to two business days.
+
+4. Test Phase: Upon approval of the timeline and pricing, work begins on preparing a draft/test version of the project.
+
+5. Approval & Payment: After reviewing the test model, providing feedback, and granting approval, the agreed-upon payment is transferred.
+
+6. Final Delivery: Final files are prepared and dispatched immediately upon receipt of the full payment.
 
 ## Collaboration Terms
-1. Clarity: All requirements and notes must be precisely defined before execution begins.
-2. File Quality: The designer is committed to providing clean, professional files free of drawing errors or missing elements.
-3. Payment: Final project files will not be delivered until the full agreed-upon amount has been received.
-4. Delays: Any delay by the client in responding after the trial version (Test) is sent will be added to the previously agreed timeline.
-5. Revisions: A maximum of 3 revisions are permitted on the trial version. Any additional revisions may be subject to extra fees.
-6. Special Requests: Any special requirements regarding copyrights, digital publishing, or usage restrictions must be clarified at the start of the agreement before work commences.
+1. Clarity: All requirements and notes must be precisely defined and finalized before the commencement of execution.
+
+2. File Quality: The designer is committed to providing clean, professional files free of drafting errors or technical omissions.
+
+3. Payment Policy: Final project files will not be released until the full agreed-upon amount has been received.
+
+4. Delays: Any delay by the client in responding after the test version is sent will be added to the previously agreed-upon delivery timeline.
+
+5. Revisions: Up to 3 revisions are permitted on the test model. Any additional modifications beyond this limit may be subject to extra fees.
+
+6. Special Requests: Any specific requirements regarding copyrights, digital publishing, or usage restrictions must be clearly stated at the beginning of the agreement before work starts.
 
 ## Image Descriptions
-1. Project designed by Al-Qadis Office - Tripoli
-2. Residential villa - Modern architectural design
-3. Commercial project - Contemporary glass facade
-4. Family home - Luxury interior design
+1. Project designed by Al-Sindyan Company – Tripoli
 
+2. Project designed by Al-Rakeza Company – Benghazi
+
+3. Project designed by Al-Atyoush Company – Benghazi
+
+4. Project designed by Al-Rakeza Company – Benghazi
+
+5. Project designed by Al-Atyoush Company – Benghazi
+
+6. Project designed by Al-Atyoush Company – Benghazi
+
+7. Project designed by Al-Qadis Company – Tripoli
+
+8. Project designed by Al-Atyoush Company – Benghazi
+
+9. Project designed by Al-Qadis Company – Tripoli
 
