@@ -153,31 +153,54 @@ async function loadArtist(folderName, index, summaryOnly = false) {
     
     // إذا كنت نريد التفاصيل الكاملة، نبحث عن صور الأعمال
     if (!summaryOnly) {
-      // محاولة تحميل صور الأعمال - نحاول فقط حتى نفشل
-      for (let i = 1; i <= 100; i++) {
-        // جرب التنسيقات المدعومة (الترتيب يمثل الأفضلية)
-        const extensions = ['webp', 'png', 'jpg', 'jpeg'];
-        let foundImage = false;
+      const extensions = ['webp', 'png', 'jpg', 'jpeg'];
+      let i = 1;
+      const CHUNK_SIZE = 4; // فحص 4 صور متوازية في كل مرة (كل صورة تجربة 4 صيغ)
+      
+      while (i <= 100) {
+        const chunkPromises = [];
         
-        for (const ext of extensions) {
-          const path = `${basePath}artists/${folderName}/${i}.${ext}`;
-          try {
-            const response = await fetch(path);
-            if (response.ok) {
-              const contentType = response.headers.get('content-type');
-              if (contentType && contentType.includes('image')) {
-                works.push(path);
-                foundImage = true;
-                break;
-              }
-            }
-          } catch (e) {
-            // تجاهل أخطاء الشبكة
+        // تجهيز مجموعة من الطلبات المتوازية
+        for (let j = 0; j < CHUNK_SIZE; j++) {
+          const currentIndex = i + j;
+          chunkPromises.push((async () => {
+            // تجربة جميع الصيغ لهذه الصورة بالتوازي
+            const extPromises = extensions.map(async (ext) => {
+              const path = `${basePath}artists/${folderName}/${currentIndex}.${ext}`;
+              try {
+                const response = await fetch(path, { method: 'HEAD' });
+                if (response.ok) {
+                  const contentType = response.headers.get('content-type');
+                  if (contentType && contentType.includes('image')) {
+                    return path;
+                  }
+                }
+              } catch (e) {}
+              return null;
+            });
+            
+            const paths = await Promise.all(extPromises);
+            return paths.find(p => p !== null); // إرجاع أول صيغة ناجحة
+          })());
+        }
+        
+        const chunkResults = await Promise.all(chunkPromises);
+        
+        let foundAnyInChunk = false;
+        for (const path of chunkResults) {
+          if (path) {
+            works.push(path);
+            foundAnyInChunk = true;
+          } else {
+            // توقف عند أول صورة مفقودة لضمان الترتيب
+            i = 101; // لكسر الـ while
+            foundAnyInChunk = false;
+            break;
           }
         }
         
-        // إذا لم نجد أي صورة لهذا الرقم، نتوقف عن البحث
-        if (!foundImage) break;
+        if (!foundAnyInChunk) break;
+        i += CHUNK_SIZE;
       }
     }
 
