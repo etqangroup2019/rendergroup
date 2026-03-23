@@ -19,7 +19,7 @@ let artists = [];
 loadAllArtists().then(loadedArtists => {
   artists = loadedArtists;
   state.loading = false;
-  
+
   // التحقق من URL بعد تحميل الفنانين
   const urlParams = new URLSearchParams(window.location.search);
   const artistId = parseInt(urlParams.get('artist'));
@@ -44,7 +44,7 @@ loadAllArtists().then(loadedArtists => {
   } else {
     window.history.replaceState({ page: 'home', artistId: null }, '', window.location.href);
   }
-  
+
   render();
 }).catch(error => {
   console.error('Error loading artists:', error);
@@ -121,13 +121,13 @@ const t = (key) => translations[state.lang][key];
 
 function formatContent(text) {
   if (!text) return '';
-  
+
   // تقسيم النص إلى أسطر
   const lines = text.split('\n').filter(line => line.trim());
-  
+
   return lines.map(line => {
     const trimmed = line.trim();
-    
+
     // إذا كان السطر يبدأ برقم متبوع بنقطة (مثل "1." أو "١.")
     if (/^[\d\u0660-\u0669]+\./.test(trimmed)) {
       return `<div class="list-item">
@@ -135,7 +135,7 @@ function formatContent(text) {
         <span class="list-text">${trimmed.replace(/^[\d\u0660-\u0669]+\.\s*/, '')}</span>
       </div>`;
     }
-    
+
     // إذا كان سطر عادي
     return `<div class="text-line">${trimmed}</div>`;
   }).join('');
@@ -158,28 +158,51 @@ function render() {
 function getNavbar() {
   return `
     <nav>
-      <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-        <div style="display: flex; align-items: center; gap: 20px;">
-          <a href="#" class="logo home-link" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
-            <img src="./app_icon.png" alt="Logo" style="height: 32px; width: 32px; object-fit: contain;">
+      <div class="navbar-container navbar-grid">
+        <div class="nav-right">
+          <a href="#" class="logo home-link">
+            <img src="./app_icon.png" alt="Logo">
             <span>${t('title')}</span>
           </a>
-          <span class="nav-subtitle" style="font-weight: 500; font-size: 0.8rem; opacity: 0.7;">${t('subtitle')}</span>
         </div>
-        <div class="controls">
-          <button id="installBtn" class="install-btn hidden">
-            <i class="fas fa-download"></i>
-            <span>${t('installApp')}</span>
-          </button>
-          <button class="theme-toggle" id="themeBtn">
-            <i class="fas fa-${state.theme === 'dark' ? 'sun' : 'moon'}"></i>
-          </button>
-          <button class="lang-toggle" id="langBtn">
-            ${t('langName')}
-          </button>
+        
+        <div class="nav-center">
+          <span class="nav-subtitle">${t('subtitle')}</span>
+        </div>
+        
+        <div class="nav-left">
+          <div class="controls">
+            <button id="installBtn" class="install-btn hidden">
+              <i class="fas fa-download"></i>
+            </button>
+            <button class="theme-toggle" id="themeBtn">
+              <i class="fas fa-${state.theme === 'dark' ? 'sun' : 'moon'}"></i>
+            </button>
+            <button class="lang-toggle" id="langBtn">
+              ${t('langName')}
+            </button>
+          </div>
         </div>
       </div>
     </nav>
+  `;
+}
+
+function getFooter() {
+  return `
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-content">
+          <p class="footer-text">
+            ${state.lang === 'ar' ? 'تم التصميم والتطوير بواسطة' : 'Designed and Developed by'}
+            <span class="footer-highlight">${state.lang === 'ar' ? 'م. خالد النويصري' : 'Eng. Khaled Al-Nwesary'}</span>
+          </p>
+          <p class="footer-copyright">
+            ${state.lang === 'ar' ? 'جميع الحقوق محفوظة' : 'All Rights Reserved'} © ${new Date().getFullYear()}
+          </p>
+        </div>
+      </div>
+    </footer>
   `;
 }
 
@@ -299,6 +322,8 @@ function renderHome() {
         ${renderArtists(filteredArtists)}
       </div>
     </main>
+    
+    ${getFooter()}
   `;
 
   attachGlobalListeners();
@@ -308,10 +333,10 @@ function renderHome() {
       btn.addEventListener('click', (e) => {
         const id = parseInt(e.target.dataset.id);
         const artist = artists.find(a => a.id === id);
-        
+
         // الانتقال الفوري لصفحة الفنان
         setState({ page: 'detail', selectedArtist: artist });
-        
+
         // تحميل صور المعرض في الخلفية
         loadArtistFull(artist).then(fullArtist => {
           // تحديث الواجهة فقط إذا كان المستخدم ما زال في صفحة هذا الفنان
@@ -379,7 +404,7 @@ function renderDetail(artist) {
       youtube: { icon: 'fab fa-youtube', color: '#ff0000' }
     };
     const config = socialConfig[platform] || { icon: 'fas fa-link', color: 'var(--primary)' };
-    
+
     // تحويل جميع الإيميلات إلى رابط Gmail
     let finalUrl = url;
     if (platform === 'email' || platform === 'gmail') {
@@ -387,7 +412,7 @@ function renderDetail(artist) {
       // استخدام Gmail لجميع الإيميلات
       finalUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailAddress}`;
     }
-    
+
     return `<a href="${finalUrl}" target="_blank" class="social-btn ${platform}"><i class="${config.icon}" style="color: ${config.color};"></i></a>`;
   }).join('')}
           </div>
@@ -411,7 +436,7 @@ function renderDetail(artist) {
       </div>
     </section>
 
-    <section class="container fade-in" style="margin-top: 60px; padding-bottom: 100px;">
+    <section class="container fade-in" style="margin-top: 60px; padding-bottom: 60px;">
       <h2 style="margin-bottom: 30px;">${t('galleryTitle')}</h2>
       ${!artist.isFullData ? `
         <div style="text-align: center; padding: 60px 20px; color: var(--primary);">
@@ -433,6 +458,8 @@ function renderDetail(artist) {
         </div>
       `}
     </section>
+    
+    ${getFooter()}
     
     <!-- Image Lightbox -->
     <div id="lightbox" class="lightbox">
@@ -482,17 +509,17 @@ function attachLightboxListeners(works, descriptions) {
   function showImage(index) {
     currentIndex = index;
     const imgSrc = works[index];
-    
+
     // Show loading state
     lightboxImage.style.opacity = '0.5';
-    
+
     // Create a new image to test loading
     const testImg = new Image();
     testImg.onload = () => {
       lightboxImage.src = imgSrc;
       lightboxImage.style.opacity = '1';
       lightboxCounter.textContent = `${index + 1} / ${works.length}`;
-      
+
       // Show description if available (use current language)
       const currentDescriptions = descriptions[state.lang] || descriptions.ar || [];
       if (currentDescriptions && currentDescriptions[index]) {
@@ -501,11 +528,11 @@ function attachLightboxListeners(works, descriptions) {
       } else {
         lightboxDescription.style.display = 'none';
       }
-      
+
       lightbox.classList.add('active');
       document.body.style.overflow = 'hidden';
       resetTransform();
-      
+
       // Preload next and previous images
       if (works[index + 1]) {
         const nextImg = new Image();
@@ -522,7 +549,7 @@ function attachLightboxListeners(works, descriptions) {
       // Try to show anyway
       lightboxImage.src = imgSrc;
       lightboxCounter.textContent = `${index + 1} / ${works.length}`;
-      
+
       // Show description if available (use current language)
       const currentDescriptions = descriptions[state.lang] || descriptions.ar || [];
       if (currentDescriptions && currentDescriptions[index]) {
@@ -531,7 +558,7 @@ function attachLightboxListeners(works, descriptions) {
       } else {
         lightboxDescription.style.display = 'none';
       }
-      
+
       lightbox.classList.add('active');
       document.body.style.overflow = 'hidden';
       resetTransform();
@@ -592,7 +619,7 @@ function attachLightboxListeners(works, descriptions) {
   // Keyboard navigation
   document.addEventListener('keydown', (e) => {
     if (!lightbox.classList.contains('active')) return;
-    
+
     if (e.key === 'Escape') closeLightbox();
     if (e.key === 'ArrowRight') showNext();
     if (e.key === 'ArrowLeft') showPrev();
