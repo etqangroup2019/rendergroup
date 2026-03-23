@@ -4,7 +4,7 @@
  */
 
 // قائمة الفنانين - يتم تحديثها يدوياً عند إضافة فنان جديد
-const artistFolders = ['khaled', 'alaa'];
+const artistFolders = ['khaled', 'alaa', 'elmo_altagore', 'ehab_hassn'];
 
 /**
  * تحليل ملف MD واستخراج المعلومات
@@ -147,8 +147,20 @@ async function loadArtist(folderName, index, summaryOnly = false) {
     const mdContent = await mdResponse.text();
     const artistData = parseMD(mdContent);
 
-    // البحث عن الصور في المجلد
-    const avatar = `${basePath}artists/${folderName}/avatar.jpg`;
+    // البحث عن صورة الأفاتار بجميع الامتدادات الممكنة
+    let avatar = `${basePath}artists/${folderName}/avatar.jpg`;
+    const avatarExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+    for (const ext of avatarExtensions) {
+      const testPath = `${basePath}artists/${folderName}/avatar.${ext}`;
+      try {
+        const response = await fetch(testPath, { method: 'HEAD' });
+        if (response.ok) {
+          avatar = testPath;
+          break;
+        }
+      } catch (e) {}
+    }
+    
     const works = [];
     
     // إذا كنت نريد التفاصيل الكاملة، نبحث عن صور الأعمال
@@ -230,7 +242,16 @@ async function loadArtist(folderName, index, summaryOnly = false) {
 export async function loadAllArtists() {
   const promises = artistFolders.map((folder, index) => loadArtist(folder, index, true));
   const results = await Promise.all(promises);
-  return results.filter(artist => artist !== null);
+  const validArtists = results.filter(artist => artist !== null);
+  
+  // ترتيب الفنانين أبجدياً حسب الاسم العربي
+  validArtists.sort((a, b) => {
+    const nameA = a.name.ar || '';
+    const nameB = b.name.ar || '';
+    return nameA.localeCompare(nameB, 'ar');
+  });
+  
+  return validArtists;
 }
 
 /**
