@@ -26,14 +26,20 @@ loadAllArtists().then(loadedArtists => {
   if (artistId) {
     const artist = artists.find(a => a.id === artistId);
     if (artist) {
-      // تحميل البيانات الكاملة للفنان المختار
+      // الانتقال الفوري بالبيانات المتاحة
+      state.page = 'detail';
+      state.selectedArtist = artist;
+      window.history.replaceState({ page: 'detail', artistId }, '', window.location.href);
+      render();
+
+      // تحميل التفاصيل في الخلفية
       loadArtistFull(artist).then(fullArtist => {
-        state.page = 'detail';
-        state.selectedArtist = fullArtist;
-        window.history.replaceState({ page: 'detail', artistId }, '', window.location.href);
-        render();
+        if (state.page === 'detail' && state.selectedArtist.id === fullArtist.id) {
+          state.selectedArtist = fullArtist;
+          render();
+        }
       });
-      return; // منع الـ render العادي لأننا سنقوم به بعد التحميل
+      return;
     }
   } else {
     window.history.replaceState({ page: 'home', artistId: null }, '', window.location.href);
@@ -299,18 +305,24 @@ function renderHome() {
 
   const attachViewBtnListeners = () => {
     document.querySelectorAll('.view-btn').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
+      btn.addEventListener('click', (e) => {
         const id = parseInt(e.target.dataset.id);
         const artist = artists.find(a => a.id === id);
         
-        // إظهار حالة تحميل بسيطة على الزر
-        const originalText = btn.textContent;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        // الانتقال الفوري لصفحة الفنان
+        setState({ page: 'detail', selectedArtist: artist });
         
-        const fullArtist = await loadArtistFull(artist);
-        
-        btn.textContent = originalText;
-        setState({ page: 'detail', selectedArtist: fullArtist });
+        // تحميل صور المعرض في الخلفية
+        loadArtistFull(artist).then(fullArtist => {
+          // تحديث الواجهة فقط إذا كان المستخدم ما زال في صفحة هذا الفنان
+          if (state.page === 'detail' && state.selectedArtist.id === fullArtist.id) {
+            state.selectedArtist = fullArtist;
+            render();
+          }
+          // تحديث البيانات في القائمة الرئيسية أيضاً للمرة القادمة
+          const mainArtist = artists.find(a => a.id === fullArtist.id);
+          if (mainArtist) Object.assign(mainArtist, fullArtist);
+        });
       });
     });
   };
@@ -401,7 +413,12 @@ function renderDetail(artist) {
 
     <section class="container fade-in" style="margin-top: 60px; padding-bottom: 100px;">
       <h2 style="margin-bottom: 30px;">${t('galleryTitle')}</h2>
-      ${artist.works && artist.works.length > 0 ? `
+      ${!artist.isFullData ? `
+        <div style="text-align: center; padding: 60px 20px; color: var(--primary);">
+          <i class="fas fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 20px;"></i>
+          <p style="color: var(--text-muted);">${state.lang === 'ar' ? 'جاري استخراج معرض الأعمال...' : 'Loading gallery...'}</p>
+        </div>
+      ` : artist.works && artist.works.length > 0 ? `
         <div class="gallery">
           ${artist.works.map((work, idx) => `
             <div class="gallery-item" data-index="${idx}">
