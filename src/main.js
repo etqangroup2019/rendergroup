@@ -1,6 +1,6 @@
 import './style.css';
 import { translations } from './data/artists.js';
-import { loadAllArtists } from './utils/artistLoader.js';
+import { loadAllArtists, loadArtistFull } from './utils/artistLoader.js';
 
 const app = document.querySelector('#app');
 
@@ -26,9 +26,14 @@ loadAllArtists().then(loadedArtists => {
   if (artistId) {
     const artist = artists.find(a => a.id === artistId);
     if (artist) {
-      state.page = 'detail';
-      state.selectedArtist = artist;
-      window.history.replaceState({ page: 'detail', artistId }, '', window.location.href);
+      // تحميل البيانات الكاملة للفنان المختار
+      loadArtistFull(artist).then(fullArtist => {
+        state.page = 'detail';
+        state.selectedArtist = fullArtist;
+        window.history.replaceState({ page: 'detail', artistId }, '', window.location.href);
+        render();
+      });
+      return; // منع الـ render العادي لأننا سنقوم به بعد التحميل
     }
   } else {
     window.history.replaceState({ page: 'home', artistId: null }, '', window.location.href);
@@ -294,10 +299,18 @@ function renderHome() {
 
   const attachViewBtnListeners = () => {
     document.querySelectorAll('.view-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         const id = parseInt(e.target.dataset.id);
         const artist = artists.find(a => a.id === id);
-        setState({ page: 'detail', selectedArtist: artist });
+        
+        // إظهار حالة تحميل بسيطة على الزر
+        const originalText = btn.textContent;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        
+        const fullArtist = await loadArtistFull(artist);
+        
+        btn.textContent = originalText;
+        setState({ page: 'detail', selectedArtist: fullArtist });
       });
     });
   };

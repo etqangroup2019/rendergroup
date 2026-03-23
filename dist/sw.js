@@ -1,91 +1,102 @@
-const CACHE_NAME = 'render-hub-v8';
+const CACHE_NAME = 'render-hub-v9';
 const BASE_URL = '/rendergroup/';
-const ASSETS = [
+const ASSETS_TO_CACHE = [
     BASE_URL,
     BASE_URL + 'index.html',
     BASE_URL + 'manifest.json',
-    BASE_URL + 'app_icon.png',
-    BASE_URL + 'khaled.jpg',
-    BASE_URL + 'alaa_avatar.jpg',
-    BASE_URL + 'render_work_1_1767876099095.png',
-    BASE_URL + 'render_work_2_1767876400226.png'
+    BASE_URL + 'app_icon.png'
 ];
 
-// Install - cache assets
+// Install - cache core assets
 self.addEventListener('install', (event) => {
     self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(ASSETS);
+            return cache.addAll(ASSETS_TO_CACHE);
         })
     );
 });
 
-// Activate - clean old caches and take control immediately
+// Activate - clean old caches and take control
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
                 cacheNames.map((cacheName) => {
                     if (cacheName !== CACHE_NAME) {
+                        console.log('SW: Cleaning old cache:', cacheName);
                         return caches.delete(cacheName);
                     }
                 })
             );
         }).then(() => {
-            // Take control of all clients immediately
             return self.clients.claim();
         })
     );
 });
 
-// Fetch - Network First strategy for HTML/JS, Cache First for images
+// Fetch strategies
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
     
-    // Skip non-http(s) requests (chrome-extension, etc.)
-    if (!url.protocol.startsWith('http')) {
-        return;
-    }
-    
-    // For HTML and JS files - Network First
-    if (event.request.mode === 'navigate' || 
+    // Skip non-http(s) requests
+    if (!url.protocol.startsWith('http')) return;
+
+    // 1. Network First for HTML/JSON/JS/CSS (Ensures updates)
+    if (
+        event.request.mode === 'navigate' || 
         url.pathname.endsWith('.html') || 
+        url.pathname.endsWith('.json') ||
         url.pathname.endsWith('.js') ||
-        url.pathname.endsWith('.css')) {
-        
+        url.pathname.endsWith('.css')
+    ) {
         event.respondWith(
             fetch(event.request)
                 .then((response) => {
-                    // Clone and cache the fresh response
                     const responseClone = response.clone();
                     caches.open(CACHE_NAME).then((cache) => {
                         cache.put(event.request, responseClone);
                     });
                     return response;
                 })
-                .catch(() => {
-                    // Fallback to cache if offline
-                    return caches.match(event.request);
-                })
+                .catch(() => caches.match(event.request))
         );
-    } else {
-        // For images and other assets - Cache First
+        return;
+    }
+
+    // 2. Stale-While-Revalidate for Images (Performance + Background update)
+    if (event.request.destination === 'image' || url.pathname.match(/\.(jpg|jpeg|png|gif|webp|svg)$/)) {
         event.respondWith(
-            caches.match(event.request, { ignoreSearch: true }).then((response) => {
-                return response || fetch(event.request).then((fetchResponse) => {
-                    const responseClone = fetchResponse.clone();
+            caches.match(event.request).then((cachedResponse) => {
+                const fetchPromise = fetch(event.request).then((networkResponse) => {
+                    const responseClone = networkResponse.clone();
                     caches.open(CACHE_NAME).then((cache) => {
                         cache.put(event.request, responseClone);
                     });
-                    return fetchResponse;
-                });
+                    return networkResponse;
+                }).catch(() => null);
+
+                return cachedResponse || fetchPromise;
             })
         );
+        return;
     }
+
+    // 3. Cache then Network (Default)
+    event.respondWith(
+        caches.match(event.request).then((response) => {
+            return response || fetch(event.request).then((fetchResponse) => {
+                const responseClone = fetchResponse.clone();
+                caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, responseClone);
+                });
+                return fetchResponse;
+            });
+        })
+    );
 });
 
-// Listen for skip waiting message from client
+// Listen for skip waiting message
 self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
         self.skipWaiting();

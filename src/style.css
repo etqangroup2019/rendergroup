@@ -488,7 +488,32 @@ nav {
   }
 
   .artist-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    padding: 20px 0;
+  }
+
+  .card-img {
+    height: 180px;
+  }
+
+  .card-content {
+    padding: 1rem;
+  }
+
+  .card-title {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .card-info {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
   }
 }
 

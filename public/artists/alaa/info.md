@@ -48,6 +48,9 @@
 4. مشروع من تصميم مكتب FIELD - طرابلس
 5. مشروع من تصميم مكتب FIELD - طرابلس
 6. مشروع من تصميم مكتب FIELD - طرابلس
+7. مشروع من تصميم شركة السهم - طرابلس
+8. عمل فني من تصميمي
+9. مشروع من تصميم شركة السهم - طرابلس
 
 
 ---
@@ -96,3 +99,6 @@ Expert in architectural design and visualization with extensive experience in cr
 4. Project designed by FIELD Office – Tripoli
 5. Project designed by FIELD Office – Tripoli
 6. Project designed by FIELD Office – Tripoli
+7. Project designed by Al-Sahm Company – Tripoli
+8. Art work designed by me
+9. Project designed by Al-Sahm Company – Tripoli

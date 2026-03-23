@@ -130,8 +130,9 @@ function parseMD(content) {
 
 /**
  * تحميل معلومات فنان واحد
+ * summaryOnly: إذا كان صحيحاً، سيتم تحميل المعلومات الأساسية فقط (بدون البحث عن جميع صور الأعمال)
  */
-async function loadArtist(folderName, index) {
+async function loadArtist(folderName, index, summaryOnly = false) {
   try {
     // الحصول على base path من vite config
     const basePath = import.meta.env.BASE_URL || '/';
@@ -150,43 +151,33 @@ async function loadArtist(folderName, index) {
     const avatar = `${basePath}artists/${folderName}/avatar.jpg`;
     const works = [];
     
-    // محاولة تحميل صور الأعمال - نحاول فقط حتى نفشل
-    for (let i = 1; i <= 100; i++) {
-      const pngPath = `${basePath}artists/${folderName}/${i}.png`;
-      const jpgPath = `${basePath}artists/${folderName}/${i}.jpg`;
-      
-      // نحاول تحميل الصورة فعلياً للتأكد من وجودها
-      let foundImage = false;
-      
-      // جرب PNG
-      try {
-        const response = await fetch(pngPath);
-        if (response.ok && response.headers.get('content-type')?.includes('image')) {
-          works.push(pngPath);
-          foundImage = true;
-          continue;
-        }
-      } catch (e) {
-        // تجاهل
-      }
-      
-      // جرب JPG
-      if (!foundImage) {
-        try {
-          const response = await fetch(jpgPath);
-          if (response.ok && response.headers.get('content-type')?.includes('image')) {
-            works.push(jpgPath);
-            foundImage = true;
-            continue;
+    // إذا كنت نريد التفاصيل الكاملة، نبحث عن صور الأعمال
+    if (!summaryOnly) {
+      // محاولة تحميل صور الأعمال - نحاول فقط حتى نفشل
+      for (let i = 1; i <= 100; i++) {
+        // جرب التنسيقات المدعومة (الترتيب يمثل الأفضلية)
+        const extensions = ['webp', 'png', 'jpg', 'jpeg'];
+        let foundImage = false;
+        
+        for (const ext of extensions) {
+          const path = `${basePath}artists/${folderName}/${i}.${ext}`;
+          try {
+            const response = await fetch(path);
+            if (response.ok) {
+              const contentType = response.headers.get('content-type');
+              if (contentType && contentType.includes('image')) {
+                works.push(path);
+                foundImage = true;
+                break;
+              }
+            }
+          } catch (e) {
+            // تجاهل أخطاء الشبكة
           }
-        } catch (e) {
-          // تجاهل
         }
-      }
-      
-      // إذا لم نجد الصورة، نتوقف
-      if (!foundImage) {
-        break;
+        
+        // إذا لم نجد أي صورة لهذا الرقم، نتوقف عن البحث
+        if (!foundImage) break;
       }
     }
 
@@ -201,7 +192,8 @@ async function loadArtist(folderName, index) {
       terms: artistData.terms,
       process: artistData.process,
       socials: artistData.socials,
-      imageDescriptions: artistData.imageDescriptions
+      imageDescriptions: artistData.imageDescriptions,
+      isFullData: !summaryOnly
     };
   } catch (error) {
     console.error(`Error loading artist ${folderName}:`, error);
@@ -210,12 +202,21 @@ async function loadArtist(folderName, index) {
 }
 
 /**
- * تحميل جميع الفنانين
+ * تحميل جميع الفنانين (المعلومات الأساسية فقط)
  */
 export async function loadAllArtists() {
-  const promises = artistFolders.map((folder, index) => loadArtist(folder, index));
+  const promises = artistFolders.map((folder, index) => loadArtist(folder, index, true));
   const results = await Promise.all(promises);
   return results.filter(artist => artist !== null);
+}
+
+/**
+ * تحميل التفاصيل الكاملة لفنان (بما في ذلك قائمة الأعمال)
+ */
+export async function loadArtistFull(artist) {
+  if (artist.isFullData) return artist;
+  const index = artistFolders.indexOf(artist.folder);
+  return await loadArtist(artist.folder, index, false);
 }
 
 /**
