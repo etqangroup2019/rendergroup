@@ -1,5 +1,7 @@
-const CACHE_NAME = 'render-hub-v9';
-const BASE_URL = '/rendergroup/';
+// استخراج الـ Base URL تلقائياً من موقع ملف sw.js ليدعم أي استضافة (GitHub, Cloudflare, إلخ)
+const BASE_URL = self.location.pathname.substring(0, self.location.pathname.lastIndexOf('/') + 1);
+const CACHE_NAME = 'render-hub-v10';
+
 const ASSETS_TO_CACHE = [
     BASE_URL,
     BASE_URL + 'index.html',
