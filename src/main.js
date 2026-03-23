@@ -97,6 +97,15 @@ function setState(newState, pushHistory = true) {
 }
 
 window.addEventListener('popstate', (event) => {
+  // التعامل مع إغلاق عارض الصور
+  const lightbox = document.getElementById('lightbox');
+  if (lightbox && lightbox.classList.contains('active')) {
+    // إذا كان عارض الصور مفتوح، أغلقه بدون تعديل history
+    lightbox.classList.remove('active');
+    document.body.classList.remove('lightbox-open');
+    return;
+  }
+  
   if (event.state) {
     const artist = event.state.artistId ? artists.find(a => a.id === event.state.artistId) : null;
     setState({
@@ -530,7 +539,15 @@ function attachLightboxListeners(works, descriptions) {
       }
 
       lightbox.classList.add('active');
-      document.body.style.overflow = 'hidden';
+      document.body.classList.add('lightbox-open');
+      
+      // إضافة history state لعارض الصور
+      window.history.pushState({
+        page: 'lightbox',
+        artistId: state.selectedArtist?.id,
+        imageIndex: index
+      }, '', window.location.href);
+      
       resetTransform();
 
       // Preload next and previous images
@@ -577,10 +594,15 @@ function attachLightboxListeners(works, descriptions) {
     lightboxImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
   }
 
-  function closeLightbox() {
+  function closeLightbox(skipHistory = false) {
     lightbox.classList.remove('active');
-    document.body.style.overflow = '';
+    document.body.classList.remove('lightbox-open');
     resetTransform();
+    
+    // إزالة history state لعارض الصور
+    if (!skipHistory && window.history.state?.page === 'lightbox') {
+      window.history.back();
+    }
   }
 
   function showNext() {
