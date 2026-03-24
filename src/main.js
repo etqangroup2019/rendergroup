@@ -2,6 +2,11 @@ import './style.css';
 import { translations } from './data/artists.js';
 import { loadAllArtists, loadArtistFull } from './utils/artistLoader.js';
 
+// منع المتصفح من استعادة موضع الـ scroll تلقائياً
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+
 const app = document.querySelector('#app');
 
 // State management
@@ -11,7 +16,8 @@ let state = {
   lang: localStorage.getItem('lang') || 'ar',
   theme: localStorage.getItem('theme') || 'dark',
   searchQuery: '',
-  loading: true
+  loading: true,
+  scrollPosition: 0
 };
 
 // تحميل الفنانين ديناميكياً
@@ -29,8 +35,9 @@ loadAllArtists().then(loadedArtists => {
       // الانتقال الفوري بالبيانات المتاحة
       state.page = 'detail';
       state.selectedArtist = artist;
-      window.history.replaceState({ page: 'detail', artistId }, '', window.location.href);
+      window.history.replaceState({ page: 'detail', artistId, scrollPosition: 0 }, '', window.location.href);
       render();
+      window.scrollTo(0, 0);
 
       // تحميل التفاصيل في الخلفية
       loadArtistFull(artist).then(fullArtist => {
@@ -42,7 +49,7 @@ loadAllArtists().then(loadedArtists => {
       return;
     }
   } else {
-    window.history.replaceState({ page: 'home', artistId: null }, '', window.location.href);
+    window.history.replaceState({ page: 'home', artistId: null, scrollPosition: 0 }, '', window.location.href);
   }
 
   render();
@@ -79,6 +86,11 @@ function setState(newState, pushHistory = true) {
   const oldPage = state.page;
   const oldArtistId = state.selectedArtist?.id;
 
+  // حفظ موضع الـ scroll الحالي قبل التغيير (إذا لم يكن محفوظاً مسبقاً)
+  if (oldPage === 'home' && newState.page === 'detail' && !newState.scrollPosition) {
+    state.scrollPosition = window.scrollY || window.pageYOffset;
+  }
+
   state = { ...state, ...newState };
   localStorage.setItem('lang', state.lang);
   localStorage.setItem('theme', state.theme);
@@ -87,13 +99,34 @@ function setState(newState, pushHistory = true) {
     const path = state.page === 'home' ? '' : `?artist=${state.selectedArtist.id}`;
     window.history.pushState({
       page: state.page,
-      artistId: state.selectedArtist?.id
+      artistId: state.selectedArtist?.id,
+      scrollPosition: state.scrollPosition
     }, '', window.location.pathname + path);
   }
 
   updateTheme();
   updateDir();
   render();
+  
+  // التمرير للأعلى عند الانتقال لصفحة التفاصيل
+  if (newState.page === 'detail' && oldPage !== 'detail') {
+    // استخدام setTimeout مع render لضمان التنفيذ بعد اكتمال الـ DOM
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }, 10);
+  }
+  
+  // استعادة موضع الـ scroll عند الرجوع للصفحة الرئيسية
+  if (newState.page === 'home' && oldPage === 'detail') {
+    setTimeout(() => {
+      const scrollPos = state.scrollPosition || 0;
+      window.scrollTo(0, scrollPos);
+      document.documentElement.scrollTop = scrollPos;
+      document.body.scrollTop = scrollPos;
+    }, 10);
+  }
 }
 
 window.addEventListener('popstate', (event) => {
@@ -108,12 +141,15 @@ window.addEventListener('popstate', (event) => {
   
   if (event.state) {
     const artist = event.state.artistId ? artists.find(a => a.id === event.state.artistId) : null;
+    const scrollPos = event.state.scrollPosition || 0;
+    
     setState({
       page: event.state.page,
-      selectedArtist: artist
+      selectedArtist: artist,
+      scrollPosition: scrollPos
     }, false);
   } else {
-    setState({ page: 'home', selectedArtist: null }, false);
+    setState({ page: 'home', selectedArtist: null, scrollPosition: 0 }, false);
   }
 });
 
@@ -342,6 +378,13 @@ function renderHome() {
       btn.addEventListener('click', (e) => {
         const id = parseInt(e.target.dataset.id);
         const artist = artists.find(a => a.id === id);
+
+        // حفظ موضع الكارت الحالي
+        const cardElement = e.target.closest('.card');
+        if (cardElement) {
+          const rect = cardElement.getBoundingClientRect();
+          state.scrollPosition = window.scrollY + rect.top - 100; // حفظ موضع الكارت مع offset
+        }
 
         // الانتقال الفوري لصفحة الفنان
         setState({ page: 'detail', selectedArtist: artist });
