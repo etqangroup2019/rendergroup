@@ -5,7 +5,7 @@
 - Instagram: https://www.instagram.com/anasshinati/
 - Facebook: https://www.facebook.com/anas.shinati/
 - Email: a.shinati@aca.ly
-- Behance: https://www.behance.net/mstrben88a928
+<!-- - Behance: https://www.behance.net/mstrben88a928 -->
 - YouTube: https://www.youtube.com/@Acacia_arch
 
 ---
