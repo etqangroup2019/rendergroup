@@ -4,7 +4,7 @@
  */
 
 // قائمة الفنانين - يتم تحديثها يدوياً عند إضافة فنان جديد
-const artistFolders = ['khaled', 'alaa', 'elmo_altagore', 'ehab_hassn'];
+const artistFolders = ['alaa', 'ehab_hassn', 'khaled', 'elmo_altagore', 'anas_shinati'];
 
 /**
  * تحليل ملف MD واستخراج المعلومات
@@ -243,13 +243,6 @@ export async function loadAllArtists() {
   const promises = artistFolders.map((folder, index) => loadArtist(folder, index, true));
   const results = await Promise.all(promises);
   const validArtists = results.filter(artist => artist !== null);
-  
-  // ترتيب الفنانين أبجدياً حسب الاسم العربي
-  validArtists.sort((a, b) => {
-    const nameA = a.name.ar || '';
-    const nameB = b.name.ar || '';
-    return nameA.localeCompare(nameB, 'ar');
-  });
   
   return validArtists;
 }
